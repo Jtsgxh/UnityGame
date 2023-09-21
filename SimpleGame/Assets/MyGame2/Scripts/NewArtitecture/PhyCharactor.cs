@@ -1,9 +1,9 @@
-﻿using System;
-using UnityEngine;
+﻿using UnityEngine;
 
-public class MyCharacterController:MonoBehaviour
+public class PhyCharactor:MonoBehaviour
 {
-    public CharacterController CharacterController;
+    public Rigidbody rigidbody;
+    public CapsuleCollider capsuleCollider;
     public float Speed = 10f;
     public PlayerData playerData;
     public bool isOnGround;
@@ -22,11 +22,12 @@ public class MyCharacterController:MonoBehaviour
     private void Awake()
     {
         playerData=GetComponent<PlayerData>();
-        CharacterController=GetComponent<CharacterController>();
+        rigidbody=GetComponent<Rigidbody>();
+        capsuleCollider = GetComponent<CapsuleCollider>();
         currentVelocity = new Vector3();
         currentRotation = new Quaternion();
         Application.targetFrameRate=60;
-        forwardRayOffsetY = new Vector3(0, forwardRayOffsetYY>0?forwardRayOffsetYY:CharacterController.height/2, 0);
+        forwardRayOffsetY = new Vector3(0, forwardRayOffsetYY>0?forwardRayOffsetYY:capsuleCollider.height/2, 0);
         CanNotClimbAngel = 90 - canClimbAngel;
     }
     
@@ -73,7 +74,7 @@ public class MyCharacterController:MonoBehaviour
             // Set the current rotation (which will be used by the KinematicCharacterMotor)
             currentRotation = Quaternion.LookRotation(smoothedLookInputDirection, transform.up);
         }
-        CharacterController.transform.rotation = currentRotation;
+        transform.rotation = currentRotation;
         // if (OrientTowardsGravity)
         // {
         //     // Rotate from current up to invert gravity
@@ -118,7 +119,7 @@ public class MyCharacterController:MonoBehaviour
         {
             currentVelocity += playerData.characterControllerData.gravity*deltaTime;
         }
-        CharacterController.Move(currentVelocity);
+        rigidbody.velocity=(currentVelocity);
         
     }
     
@@ -135,9 +136,9 @@ public class MyCharacterController:MonoBehaviour
     
     Vector3 CheckGround()
     {
-        Debug.DrawRay(transform.position+(characterUp * GroundCheckOffSet),Vector3.down,Color.black,GroundCheckOffSet - CharacterController.radius + 2 * CharacterController.skinWidth);
-        if (Physics.SphereCast(transform.position + (characterUp * GroundCheckOffSet), CharacterController.radius,
-                Vector3.down, out RaycastHit hit, CharacterController.height/2 -CharacterController.radius + 2 * CharacterController.skinWidth))
+        Debug.DrawRay(transform.position+(characterUp * GroundCheckOffSet),Vector3.down,Color.black,GroundCheckOffSet - capsuleCollider.radius );
+        if (Physics.SphereCast(transform.position + (characterUp * GroundCheckOffSet), capsuleCollider.radius,
+                Vector3.down, out RaycastHit hit, capsuleCollider.height/2 -capsuleCollider.radius+0.1f ))
         {
             isOnGround = true;
             Debug.DrawLine(transform.position, transform.position + hit.normal * 100, Color.blue);
@@ -153,7 +154,7 @@ public class MyCharacterController:MonoBehaviour
     Vector3 CheckFrontWall()
     {
         RaycastHit hit;
-        if (Physics.Raycast(transform.position +forwardRayOffsetY, transform.forward,out hit, CharacterController.radius+checkOffSet)) {
+        if (Physics.Raycast(transform.position +forwardRayOffsetY, transform.forward,out hit, capsuleCollider.radius+checkOffSet)) {
             frontIsWall = true;
             return hit.normal;
         }

@@ -95,7 +95,7 @@ public class MyCharacterController:MonoBehaviour
             Vector3 inputRight = Vector3.Cross(playerData.characterControllerData.moveInputVector, characterUp);
             Debug.DrawLine(transform.position,transform.position+playerData.characterControllerData.moveInputVector*100,Color.red);
             Vector3 reorientedInput = Vector3.Cross(groundNormal, inputRight).normalized * playerData.characterControllerData.moveInputVector.magnitude;
-            targetMovementVelocity = reorientedInput * playerData.characterControllerData.MaxAirMoveSpeed;
+            targetMovementVelocity = reorientedInput * playerData.characterControllerData.walkSpeed;
            Debug.DrawLine(transform.position,transform.position+targetMovementVelocity*100,Color.green);
             // Smooth movement Velocity
             // currentVelocity = Vector3.Lerp(currentVelocity, targetMovementVelocity, 1 - Mathf.Exp(-playerData.characterControllerData.StableMovementSharpness * deltaTime));

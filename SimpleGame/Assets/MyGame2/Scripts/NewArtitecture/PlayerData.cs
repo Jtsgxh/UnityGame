@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
 
 public class InputData
 {
@@ -33,6 +34,7 @@ public class CharacterControllerData
     public Vector3 moveInputVector;
     public Vector3 lookInputVector;
     public  Vector3 jumpAddVelocity=Vector3.zero;
+    public float walkSpeed = 1f;
     public Vector3 gravity = new Vector3(0, -9.8f, 0);
     #endregion
 }
@@ -54,17 +56,35 @@ public class PlayerData:MonoBehaviour {
     public CharacterControllerData characterControllerData;
     public CameraData cameraData;
     public WeaponData weaponData;
+
+    public float gravitySpeed = 0.1f;
+    public float walkSpeed = 0.1f;
+    public float jumpSpeed = 0.1f;
+    
     private void Awake()
     {
         inputData = new InputData();
         characterControllerData = new CharacterControllerData();
         cameraData = new CameraData();
         weaponData = new WeaponData();
+        SetPlayerData();
     }
 
     private void Start()
     {
         
+    }
+
+    private void Update()
+    {
+        //SetPlayerData();
+    }
+
+    public void SetPlayerData()
+    {
+        characterControllerData.gravity *= gravitySpeed;
+        characterControllerData.JumpSpeed *= jumpSpeed;
+        characterControllerData.walkSpeed *= walkSpeed;
     }
 }
 

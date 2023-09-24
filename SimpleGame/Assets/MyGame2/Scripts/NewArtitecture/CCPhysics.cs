@@ -44,6 +44,18 @@ public class CCPhysics : MonoBehaviour
     #region 
     public Transform playerInputSpace = default;
     #endregion
+
+    #region ClimbPart
+    public float maxClimbAngel=140f;
+    public float minClimtDotProduct;
+    private Vector3 climbNormal;
+    public int  climbContactCount;
+    #endregion
+
+    #region gravity
+    private Vector3 upAxis,rightAxis,forwardAxis;
+    public Vector3 gravityDir = new Vector3(0,-9.8f,0);
+    #endregion
     bool OnGround => groundContactCount > 0;
 
     private void Awake()
@@ -51,13 +63,15 @@ public class CCPhysics : MonoBehaviour
         body = GetComponent<Rigidbody>();
         InputManager = GetComponent<InputManager>();
         PlayerData = GetComponent<PlayerData>();
+        Physics.gravity = gravityDir;
         OnValidate();
     }
 
     private void OnValidate()
     {
         minGroundDotProduct = Mathf.Cos(maxGroundAngel*Mathf.Deg2Rad);
-        minStartStairsAngle = Mathf.Cos(maxStairsAngle*Mathf.Deg2Rad);
+        minStartStairsAngle = Mathf.Cos(maxStairsAngle * Mathf.Deg2Rad);
+        minClimtDotProduct = Mathf.Cos(maxClimbAngel * Mathf.Deg2Rad);
     }
 
     void Start()
@@ -92,6 +106,8 @@ public class CCPhysics : MonoBehaviour
         playerInput=Vector2.ClampMagnitude(playerInput,1f);
       if (playerInputSpace)
       {
+          rightAxis = ProjectDirectionOnPlane(playerInputSpace.right, upAxis);
+          forwardAxis = ProjectDirectionOnPlane(playerInputSpace.forward, upAxis);
           Vector3 forward = playerInputSpace.forward;
           forward.y = 0f;
           forward.Normalize();
@@ -103,6 +119,8 @@ public class CCPhysics : MonoBehaviour
       }
       else
       {
+          rightAxis = ProjectDirectionOnPlane(Vector3.right, upAxis);
+          forwardAxis = ProjectDirectionOnPlane(Vector3.forward, upAxis);
           desiredVelocity=new Vector3(playerInput.x,0,playerInput.y)*maxSpeed;
       }
       desiredJump=Input.GetButton("Jump");
@@ -113,6 +131,7 @@ public class CCPhysics : MonoBehaviour
 
     private void FixedUpdate()
     {
+        upAxis = -Physics.gravity.normalized;
         UpdateState();
         AjdustVelocity();
         if (desiredJump)
@@ -130,30 +149,49 @@ public class CCPhysics : MonoBehaviour
         velocity = body.velocity;
         if (OnGround||SnapToGround()||CheckSteepContacts()) {
             stepsSinceLastGrounded = 0;
-            jumpPhase = 0;
+            //跳跃后下一步算作接地？
+            if (stepsSinceLastJump > 1) {
+                jumpPhase = 0;
+            }
             if (groundContactCount > 1) {
                 contactNormal.Normalize();
             }
         }
-        else {
-            contactNormal = Vector3.up;
+        else
+        {
+            contactNormal = upAxis;
         }
     }
     
     //沿着表面法线的跳跃
-    void Jump()
-    {
-        if (OnGround||jumpPhase<maxAirJumps)
-        { 
-            jumpPhase++;
-            stepsSinceLastJump = 0;
-            float jumpSpeed = Mathf.Sqrt(-2f * Physics.gravity.y * jumpHeight);
-            float alignedSpeed = Vector3.Dot(velocity, contactNormal);
-            if (alignedSpeed > 0f) {
-                jumpSpeed = Mathf.Max(jumpSpeed - alignedSpeed, 0f);
-            }
-            velocity += contactNormal * jumpSpeed;
+    void Jump () {
+        Vector3 jumpDirection;
+        if (OnGround) {
+            jumpDirection = contactNormal;
         }
+        else if (OnSteep) {
+            jumpDirection = steepNormal;
+            jumpPhase = 0;
+        }
+        else if (maxAirJumps > 0&&jumpPhase <= maxAirJumps) {
+            //
+            if (jumpPhase == 0) {
+                jumpPhase = 1;
+            }
+            jumpDirection = contactNormal;
+        }else {
+            return;
+        }
+        stepsSinceLastJump = 0;
+        jumpPhase += 1;
+        float jumpSpeed = Mathf.Sqrt(2f * Physics.gravity.magnitude * jumpHeight);
+        jumpDirection = (jumpDirection + upAxis).normalized;
+        float alignedSpeed = Vector3.Dot(velocity, jumpDirection);
+        if (alignedSpeed > 0f) {
+            jumpSpeed = Mathf.Max(jumpSpeed - alignedSpeed, 0f);
+        }
+        velocity += jumpDirection * jumpSpeed;
+        //}
     }
 
     private void OnCollisionStay(Collision other)
@@ -171,11 +209,11 @@ public class CCPhysics : MonoBehaviour
         float minDot = GetMinDot(collision.gameObject.layer);
         for (int i = 0; i < collision.contactCount; i++) {
             Vector3 normal = collision.GetContact(i).normal;
-            if (normal.y >= minDot) {
-                //onGround = true;
+            float upDot = Vector3.Dot(upAxis, normal);
+            if (upDot >= minDot) {
                 groundContactCount += 1;
                 contactNormal += normal;
-            }else if (normal.y > -0.1f)
+            }else if (upDot > -0.1f)
             {
                 steepContactCount += 1;
                 steepNormal += normal;
@@ -184,13 +222,15 @@ public class CCPhysics : MonoBehaviour
     }
     
     void ClearState () {
-        groundContactCount = steepContactCount = 0;
-        contactNormal = steepNormal = Vector3.zero;
+        groundContactCount = steepContactCount = climbContactCount = 0;
+        climbNormal=contactNormal = steepNormal = Vector3.zero;
+        
+        
     }
     
-    public Vector3 ProjectOnContactPlane(Vector3 vector,Vector3 contactNormal)
+    public Vector3 ProjectDirectionOnPlane(Vector3 vector,Vector3 contactNormal)
     {
-        return vector - contactNormal * Vector3.Dot(vector, contactNormal);
+        return (vector - contactNormal * Vector3.Dot(vector, contactNormal)).normalized;
     }
     public void UpdateRotation(Quaternion currentRotation, float deltaTime)
     {
@@ -212,8 +252,8 @@ public class CCPhysics : MonoBehaviour
     }
     void AjdustVelocity()
     {
-        Vector3 xAxis = ProjectOnContactPlane(Vector3.right, contactNormal);
-        Vector3 zAxis = ProjectOnContactPlane(Vector3.forward, contactNormal);
+        Vector3 xAxis = ProjectDirectionOnPlane(Vector3.right, contactNormal);
+        Vector3 zAxis = ProjectDirectionOnPlane(Vector3.forward, contactNormal);
         float currentX = Vector3.Dot(velocity, xAxis);
         float currentZ = Vector3.Dot(velocity, zAxis);
         float acceleration = OnGround ? maxAcceleration : maxAirAcceleration;
@@ -236,13 +276,13 @@ public class CCPhysics : MonoBehaviour
             return false;
         }
         
-        if (!Physics.Raycast(body.position, Vector3.down,out RaycastHit hit,probeDistance,probeMask))
+        if (!Physics.Raycast(body.position, -upAxis,out RaycastHit hit,probeDistance,probeMask))
         {
             return false;
         }
-
-        if (hit.normal.y < GetMinDot(hit.collider.gameObject.layer))
-        {
+        
+        float upDot = Vector3.Dot(upAxis, hit.normal);
+        if (upDot < GetMinDot(hit.collider.gameObject.layer)) {
             return false;
         }
 

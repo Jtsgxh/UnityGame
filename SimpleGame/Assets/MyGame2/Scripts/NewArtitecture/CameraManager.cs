@@ -12,9 +12,12 @@ public class CameraManager:MonoBehaviour
     [SerializeField, Range(0f, 1f)]
     float focusCentering = 0.5f;
     Vector2 orbitAngles = new Vector2(45f, 0f);
+    Quaternion gravityAlignment = Quaternion.identity;
+    Quaternion orbitRotation;
     private void Awake()
     {
         focusPoint = focus.position;
+        transform.localRotation = orbitRotation = Quaternion.Euler(orbitAngles);
     }
 
     private void Start()
@@ -24,15 +27,15 @@ public class CameraManager:MonoBehaviour
 
     private void Update()
     {
-        RaycastHit hit;
-        if (Physics.Raycast(transform.position, transform.forward, out hit, 100))
-        {
-            playerData.cameraData.aimPoint=hit.point;
-        }
-        else
-        {
-            playerData.cameraData.aimPoint = transform.position + transform.forward * 100;
-        }
+        // RaycastHit hit;
+        // if (Physics.Raycast(transform.position, transform.forward, out hit, 100))
+        // {
+        //     playerData.cameraData.aimPoint=hit.point;
+        // }
+        // else
+        // {
+        //     playerData.cameraData.aimPoint = transform.position + transform.forward * 100;
+        // }
       //  GameObject.CreatePrimitive(PrimitiveType.Sphere).transform.position = playerData.cameraData.aimPoint;
       //  Debug.DrawLine(transform.position,transform.position+transform.forward*100,Color.red);
        // Debug.Log(playerData.cameraData.aimPoint);
@@ -41,8 +44,14 @@ public class CameraManager:MonoBehaviour
 
     private void LateUpdate()
     {   orbitAngles = new Vector2(playerData.inputData.rotatey, playerData.inputData.rotatex);
+        orbitRotation=Quaternion.Euler(orbitAngles);
+        Quaternion lookRotation = gravityAlignment * orbitRotation;
+        gravityAlignment =
+            Quaternion.FromToRotation(
+                gravityAlignment * Vector3.up,  -CustomGravity.GetGravity(focusPoint)
+            ) * gravityAlignment;
         UpdateFocusPoint();
-        Quaternion lookRotation = Quaternion.Euler(orbitAngles);
+      //-  Quaternion lookRotation = Quaternion.Euler(orbitAngles);
         Vector3 lookDirection = lookRotation * Vector3.forward;
         Vector3 lookPosition = focusPoint - lookDirection * distance;
         transform.SetPositionAndRotation(lookPosition, lookRotation);

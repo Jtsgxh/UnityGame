@@ -63,7 +63,8 @@ public class CCPhysics : MonoBehaviour
         body = GetComponent<Rigidbody>();
         InputManager = GetComponent<InputManager>();
         PlayerData = GetComponent<PlayerData>();
-        Physics.gravity = gravityDir;
+        body.useGravity = false;
+      //  Physics.gravity = gravityDir;
         OnValidate();
     }
 
@@ -98,6 +99,7 @@ public class CCPhysics : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        Physics.gravity = gravityDir;
         Vector2 playerInput;
         SetInputs();
         playerInput.x = PlayerData.inputData.MoveAxisRight;
@@ -131,14 +133,17 @@ public class CCPhysics : MonoBehaviour
 
     private void FixedUpdate()
     {
-        upAxis = -Physics.gravity.normalized;
+        //upAxis = -Physics.gravity.normalized;
+        Vector3 gravity = CustomGravity.GetGravity(body.position, out upAxis);
         UpdateState();
         AjdustVelocity();
         if (desiredJump)
         {
             desiredJump = false;
-            Jump();
+            Jump(gravity);
         }
+
+        velocity += gravity * Time.fixedDeltaTime;
         body.velocity = velocity;
         ClearState();
     }
@@ -164,7 +169,7 @@ public class CCPhysics : MonoBehaviour
     }
     
     //沿着表面法线的跳跃
-    void Jump () {
+    void Jump (Vector3 gravity) {
         Vector3 jumpDirection;
         if (OnGround) {
             jumpDirection = contactNormal;
@@ -184,7 +189,7 @@ public class CCPhysics : MonoBehaviour
         }
         stepsSinceLastJump = 0;
         jumpPhase += 1;
-        float jumpSpeed = Mathf.Sqrt(2f * Physics.gravity.magnitude * jumpHeight);
+        float jumpSpeed = Mathf.Sqrt(2f * gravity.magnitude * jumpHeight);
         jumpDirection = (jumpDirection + upAxis).normalized;
         float alignedSpeed = Vector3.Dot(velocity, jumpDirection);
         if (alignedSpeed > 0f) {

@@ -35,13 +35,12 @@ public class PhyCharactor:MonoBehaviour
     {
         characterUp= transform.up;
         SetInputs();
- 
     }
 
     private void FixedUpdate()
     {
-               UpdateVelocity(ref currentVelocity, Time.fixedDeltaTime);
-                UpdateRotation(ref currentRotation,Time.fixedDeltaTime);
+        UpdateVelocity(ref currentVelocity,Time.fixedDeltaTime);
+        UpdateRotation(ref currentRotation,Time.fixedDeltaTime);
     }
 
     public virtual void SetInputs()

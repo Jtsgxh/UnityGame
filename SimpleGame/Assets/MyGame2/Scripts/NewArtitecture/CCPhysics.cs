@@ -80,10 +80,10 @@ public class CCPhysics : MonoBehaviour
         
     }
     public virtual void SetInputs()
-    {
-        Vector3 moveInputVector = Vector3.ClampMagnitude(new Vector3(PlayerData.inputData.MoveAxisRight, 0f, PlayerData.inputData.MoveAxisForward), 1f);
-  //      Debug.Log("move"+moveInputVector);
+    { 
+        //      Debug.Log("move"+moveInputVector);
         // Calculate camera direction and rotation on the character plane
+        transform.up=CustomGravity.GetGravity(transform.position).normalized;
         Vector3 cameraPlanarDirection = Vector3.ProjectOnPlane(PlayerData.inputData.CameraRotation * Vector3.forward, transform.up).normalized;
         if (cameraPlanarDirection.sqrMagnitude == 0f)
         {

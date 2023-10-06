@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class CCPhysics : MonoBehaviour
@@ -50,6 +51,13 @@ public class CCPhysics : MonoBehaviour
     public float minClimtDotProduct;
     private Vector3 climbNormal;
     public int  climbContactCount;
+    #endregion
+
+    #region MoveWithPlane
+
+    public Rigidbody connectedBody,previousConnectedBody;
+    public Vector3 connectionWorldPosition;
+    private Vector3 connectionVelocity;
     #endregion
 
     #region gravity
@@ -148,10 +156,29 @@ public class CCPhysics : MonoBehaviour
         ClearState();
     }
 
+    void UpdateConnectionState()
+    {
+        if (connectedBody == previousConnectedBody) {
+            Vector3 connectionMovement =
+                connectedBody.position - connectionWorldPosition;
+            connectionVelocity = connectionMovement / Time.fixedDeltaTime;
+        }
+   //     connectionVelocity = connectedBody.velocity;
+        connectionWorldPosition = connectedBody.position;
+    }
+
     void UpdateState () {
         stepsSinceLastGrounded += 1;
         stepsSinceLastJump += 1;
         velocity = body.velocity;
+        Debug.Log(velocity);
+        if (connectedBody)
+        {
+            if (connectedBody.isKinematic || connectedBody.mass >= body.mass)
+            {
+                UpdateConnectionState();
+            }
+        }
         if (OnGround||SnapToGround()||CheckSteepContacts()) {
             stepsSinceLastGrounded = 0;
             //跳跃后下一步算作接地？
@@ -218,10 +245,15 @@ public class CCPhysics : MonoBehaviour
             if (upDot >= minDot) {
                 groundContactCount += 1;
                 contactNormal += normal;
+                connectedBody = collision.rigidbody;
             }else if (upDot > -0.1f)
             {
                 steepContactCount += 1;
                 steepNormal += normal;
+                if (groundContactCount == 0)
+                {
+                    connectedBody = collision.rigidbody;
+                }
             }
         }
     }
@@ -229,8 +261,10 @@ public class CCPhysics : MonoBehaviour
     void ClearState () {
         groundContactCount = steepContactCount = climbContactCount = 0;
         climbNormal=contactNormal = steepNormal = Vector3.zero;
-        
-        
+        connectionVelocity= Vector3.zero;
+        previousConnectedBody = connectedBody;
+        connectedBody = null;
+
     }
     
     public Vector3 ProjectDirectionOnPlane(Vector3 vector,Vector3 contactNormal)
@@ -259,13 +293,25 @@ public class CCPhysics : MonoBehaviour
     {
         Vector3 xAxis = ProjectDirectionOnPlane(Vector3.right, contactNormal);
         Vector3 zAxis = ProjectDirectionOnPlane(Vector3.forward, contactNormal);
-        float currentX = Vector3.Dot(velocity, xAxis);
-        float currentZ = Vector3.Dot(velocity, zAxis);
+        Vector3 relativeVelocity = velocity - connectionVelocity;
+        Debug.Log("rela"+relativeVelocity);
+        float currentX = Vector3.Dot(relativeVelocity, xAxis);
+        float currentZ = Vector3.Dot(relativeVelocity, zAxis);
         float acceleration = OnGround ? maxAcceleration : maxAirAcceleration;
         float maxSpeedChange = acceleration*Time.deltaTime;
-        float newX = Mathf.MoveTowards(currentX, desiredVelocity.x, maxSpeedChange);
-        float newZ = Mathf.MoveTowards(currentZ, desiredVelocity.z, maxSpeedChange);
-        velocity += xAxis * (newX - currentX) + zAxis * (newZ - currentZ);
+        //SPEED CHANGE SHOULD DECEIDE BY WHEHERE CONNECTION IS NIL 
+     
+       if (connectedBody)
+       {
+             velocity += xAxis * (desiredVelocity.x - currentX) + zAxis * (desiredVelocity.z - currentZ);
+       }
+       else
+       {
+             float newX = Mathf.MoveTowards(currentX, desiredVelocity.x, maxSpeedChange);
+             float newZ = Mathf.MoveTowards(currentZ, desiredVelocity.z, maxSpeedChange);
+             velocity += xAxis * (newX - currentX) + zAxis * (newZ - currentZ);
+       }
+      
     }
 
     bool SnapToGround()
@@ -298,6 +344,8 @@ public class CCPhysics : MonoBehaviour
         {
             velocity = (velocity - hit.normal * dot).normalized * speed;
         }
+
+        connectedBody = hit.rigidbody;
         return true;
     }
 

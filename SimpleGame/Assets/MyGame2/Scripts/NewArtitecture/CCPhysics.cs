@@ -57,7 +57,7 @@ public class CCPhysics : MonoBehaviour
 
     public Rigidbody connectedBody,previousConnectedBody;
     public Vector3 connectionWorldPosition;
-    private Vector3 connectionVelocity;
+    private Vector3 connectionVelocity,connectionLocalPosition;
     #endregion
 
     #region gravity
@@ -156,15 +156,17 @@ public class CCPhysics : MonoBehaviour
         ClearState();
     }
 
-    void UpdateConnectionState()
-    {
+    void UpdateConnectionState () {
         if (connectedBody == previousConnectedBody) {
             Vector3 connectionMovement =
-                connectedBody.position - connectionWorldPosition;
+                connectedBody.transform.TransformPoint(connectionLocalPosition) -
+                connectionWorldPosition;
             connectionVelocity = connectionMovement / Time.fixedDeltaTime;
         }
-   //     connectionVelocity = connectedBody.velocity;
-        connectionWorldPosition = connectedBody.position;
+        connectionWorldPosition = body.position;
+        connectionLocalPosition = connectedBody.transform.InverseTransformPoint(
+            connectionWorldPosition
+        );
     }
 
     void UpdateState () {

@@ -6665,9 +6665,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   InputManager: {fileID: 0}
   PlayerData: {fileID: 0}
-  maxSpeed: 40
+  maxSpeed: 10
   velocity: {x: 0, y: 0, z: 0}
-  maxAcceleration: 10000
+  maxAcceleration: 100
   maxAirAcceleration: 1
   body: {fileID: 0}
   desiredVelocity: {x: 0, y: 0, z: 0}

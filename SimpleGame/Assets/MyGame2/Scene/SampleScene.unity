@@ -6690,6 +6690,9 @@ MonoBehaviour:
   maxClimbAngel: 140
   minClimtDotProduct: -0.76604444
   climbContactCount: 0
+  climbMask:
+    serializedVersion: 2
+    m_Bits: 4294967295
   connectedBody: {fileID: 0}
   previousConnectedBody: {fileID: 0}
   connectionWorldPosition: {x: 0, y: 0, z: 0}

@@ -50,7 +50,12 @@ public class CCPhysics : MonoBehaviour
     public float maxClimbAngel=140f;
     public float minClimtDotProduct;
     private Vector3 climbNormal;
-    public int  climbContactCount;
+    public int  climbContactCount; 
+    public bool Climbing => climbContactCount > 0;
+    public LayerMask climbMask = -1;
+    public float maxClimbAcceleration;
+    public float maxClimbSpeed;
+    public bool desiresClimbing;
     #endregion
 
     #region MoveWithPlane
@@ -72,6 +77,7 @@ public class CCPhysics : MonoBehaviour
         InputManager = GetComponent<InputManager>();
         PlayerData = GetComponent<PlayerData>();
         body.useGravity = false;
+        desiredVelocity = new Vector3();
       //  Physics.gravity = gravityDir;
         OnValidate();
     }
@@ -80,6 +86,7 @@ public class CCPhysics : MonoBehaviour
     {
         minGroundDotProduct = Mathf.Cos(maxGroundAngel*Mathf.Deg2Rad);
         minStartStairsAngle = Mathf.Cos(maxStairsAngle * Mathf.Deg2Rad);
+        minClimtDotProduct = Mathf.Cos(maxClimbAngel * Mathf.Deg2Rad);
         minClimtDotProduct = Mathf.Cos(maxClimbAngel * Mathf.Deg2Rad);
     }
 
@@ -118,14 +125,15 @@ public class CCPhysics : MonoBehaviour
       {
           rightAxis = ProjectDirectionOnPlane(playerInputSpace.right, upAxis);
           forwardAxis = ProjectDirectionOnPlane(playerInputSpace.forward, upAxis);
-          Vector3 forward = playerInputSpace.forward;
+          Debug.DrawRay(transform.position,forwardAxis*5,Color.black);
+          /*Vector3 forward = playerInputSpace.forward;
           forward.y = 0f;
           forward.Normalize();
           Vector3 right = playerInputSpace.right;
           right.y = 0f;
-          right.Normalize();
-          desiredVelocity =
-              (forward * playerInput.y + right * playerInput.x) * maxSpeed;
+          right.Normalize();*/
+          desiredVelocity.x= playerInput.x*maxSpeed;
+          desiredVelocity.z= playerInput.y*maxSpeed;
       }
       else
       {
@@ -134,6 +142,7 @@ public class CCPhysics : MonoBehaviour
           desiredVelocity=new Vector3(playerInput.x,0,playerInput.y)*maxSpeed;
       }
       desiredJump=Input.GetButton("Jump");
+      desiresClimbing = Input.GetKey(KeyCode.J);
       GetComponent<Renderer>().material.SetColor(
           "_Color", OnGround ? Color.black : Color.white
       );
@@ -144,14 +153,19 @@ public class CCPhysics : MonoBehaviour
         //upAxis = -Physics.gravity.normalized;
         Vector3 gravity = CustomGravity.GetGravity(body.position, out upAxis);
         UpdateState();
-        AjdustVelocity();
+        AdjustVelocity();
         if (desiredJump)
         {
             desiredJump = false;
             Jump(gravity);
         }
-
-        velocity += gravity * Time.fixedDeltaTime;
+        
+        if (Climbing) {
+            velocity -= contactNormal * (maxClimbAcceleration * Time.deltaTime);
+        }
+        else {
+            velocity += gravity * Time.deltaTime;
+        }
         body.velocity = velocity;
         ClearState();
     }
@@ -181,7 +195,7 @@ public class CCPhysics : MonoBehaviour
                 UpdateConnectionState();
             }
         }
-        if (OnGround||SnapToGround()||CheckSteepContacts()) {
+        if (CheckClimbing()||OnGround||SnapToGround()||CheckSteepContacts()) {
             stepsSinceLastGrounded = 0;
             //跳跃后下一步算作接地？
             if (stepsSinceLastJump > 1) {
@@ -240,7 +254,8 @@ public class CCPhysics : MonoBehaviour
     
     void EvaluateCollision (Collision collision)
     {
-        float minDot = GetMinDot(collision.gameObject.layer);
+        int layer = collision.gameObject.layer;
+        float minDot = GetMinDot(layer);
         for (int i = 0; i < collision.contactCount; i++) {
             Vector3 normal = collision.GetContact(i).normal;
             float upDot = Vector3.Dot(upAxis, normal);
@@ -248,12 +263,23 @@ public class CCPhysics : MonoBehaviour
                 groundContactCount += 1;
                 contactNormal += normal;
                 connectedBody = collision.rigidbody;
-            }else if (upDot > -0.1f)
+            }else 
             {
-                steepContactCount += 1;
-                steepNormal += normal;
-                if (groundContactCount == 0)
+                if (upDot > -0.01f)
                 {
+                    steepContactCount += 1;
+                    steepNormal += normal;
+                    if (groundContactCount == 0)
+                    {
+                        connectedBody = collision.rigidbody;
+                    }
+                }
+
+                if (desiresClimbing &&upDot >= minClimtDotProduct&&
+                    (climbMask & (1 << layer)) != 0)
+                {
+                    climbContactCount += 1;
+                    climbNormal += normal;
                     connectedBody = collision.rigidbody;
                 }
             }
@@ -271,7 +297,7 @@ public class CCPhysics : MonoBehaviour
     
     public Vector3 ProjectDirectionOnPlane(Vector3 vector,Vector3 contactNormal)
     {
-        return (vector - contactNormal * Vector3.Dot(vector, contactNormal)).normalized;
+        return (vector - contactNormal.normalized * Vector3.Dot(vector, contactNormal.normalized)).normalized;
     }
     public void UpdateRotation(Quaternion currentRotation, float deltaTime)
     {
@@ -291,29 +317,39 @@ public class CCPhysics : MonoBehaviour
         //     currentRotation = Quaternion.FromToRotation((currentRotation * Vector3.up), -Gravity) * currentRotation;
         // }
     }
-    void AjdustVelocity()
-    {
-        Vector3 xAxis = ProjectDirectionOnPlane(Vector3.right, contactNormal);
-        Vector3 zAxis = ProjectDirectionOnPlane(Vector3.forward, contactNormal);
+    void AdjustVelocity () {
+        float acceleration, speed;
+        Vector3 xAxis, zAxis;
+        if (Climbing) {
+            acceleration = maxClimbAcceleration;
+            speed = maxClimbSpeed;
+            xAxis = Vector3.Cross(contactNormal, upAxis);
+            zAxis = upAxis;
+        }
+        else {
+            acceleration = OnGround ? maxAcceleration : maxAirAcceleration;
+            speed = OnGround && desiresClimbing ? maxClimbSpeed : maxSpeed;
+            xAxis = rightAxis;
+            zAxis = forwardAxis;
+        }
+       // Debug.DrawRay(transform.position,forwardAxis*5,Color.magenta);
+        xAxis = ProjectDirectionOnPlane(xAxis, contactNormal);
+      //  Debug.DrawRay(transform.position,xAxis*5,Color.red);
+        zAxis = ProjectDirectionOnPlane(zAxis, contactNormal);
+       // Debug.DrawRay(transform.position,zAxis*5,Color.blue);
         Vector3 relativeVelocity = velocity - connectionVelocity;
-        Debug.Log("rela"+relativeVelocity);
         float currentX = Vector3.Dot(relativeVelocity, xAxis);
         float currentZ = Vector3.Dot(relativeVelocity, zAxis);
-        float acceleration = OnGround ? maxAcceleration : maxAirAcceleration;
-        float maxSpeedChange = acceleration*Time.deltaTime;
-        //SPEED CHANGE SHOULD DECEIDE BY WHEHERE CONNECTION IS NIL 
-     
-       if (connectedBody)
-       {
-             velocity += xAxis * (desiredVelocity.x - currentX) + zAxis * (desiredVelocity.z - currentZ);
-       }
-       else
-       {
-             float newX = Mathf.MoveTowards(currentX, desiredVelocity.x, maxSpeedChange);
-             float newZ = Mathf.MoveTowards(currentZ, desiredVelocity.z, maxSpeedChange);
-             velocity += xAxis * (newX - currentX) + zAxis * (newZ - currentZ);
-       }
-      
+
+        float maxSpeedChange = acceleration * Time.fixedDeltaTime;
+
+        float newX =
+            Mathf.MoveTowards(currentX, desiredVelocity.x * speed, maxSpeedChange);
+        float newZ =
+            Mathf.MoveTowards(currentZ, desiredVelocity.z * speed, maxSpeedChange);
+
+        velocity += xAxis * (newX - currentX) + zAxis * (newZ - currentZ);
+        //Debug.DrawRay(transform.position,velocity*5,Color.green);
     }
 
     bool SnapToGround()
@@ -368,4 +404,15 @@ public class CCPhysics : MonoBehaviour
         }
         return false;
     }
+    
+    bool CheckClimbing () {
+        if (Climbing) {
+            groundContactCount = climbContactCount;
+            contactNormal = climbNormal;
+            return true;
+        }
+        return false;
+    }
 }
+
+

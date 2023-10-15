@@ -51,11 +51,12 @@ public class CCPhysics : MonoBehaviour
     public float minClimtDotProduct;
     private Vector3 climbNormal;
     public int  climbContactCount; 
-    public bool Climbing => climbContactCount > 0;
+    public bool Climbing => climbContactCount > 0&&stepsSinceLastJump>2;
     public LayerMask climbMask = -1;
     public float maxClimbAcceleration;
     public float maxClimbSpeed;
     public bool desiresClimbing;
+    public Vector3  lastClimbNormal;
     #endregion
 
     #region MoveWithPlane
@@ -161,10 +162,21 @@ public class CCPhysics : MonoBehaviour
         }
         
         if (Climbing) {
-            velocity -= contactNormal * (maxClimbAcceleration * Time.deltaTime);
+            velocity -= contactNormal * (maxClimbAcceleration * Time.fixedDeltaTime);
         }
-        else {
-            velocity += gravity * Time.deltaTime;
+        else if (OnGround && velocity.sqrMagnitude < 0.01f) {
+            velocity +=
+                contactNormal *
+                (Vector3.Dot(gravity, contactNormal) * Time.fixedDeltaTime);
+        }
+        else if (desiresClimbing && OnGround) {
+            velocity +=
+                (gravity - contactNormal * (maxClimbAcceleration * 0.9f)) *
+                Time.fixedDeltaTime;
+        }
+        else
+        {
+            velocity += gravity * Time.fixedDeltaTime;
         }
         body.velocity = velocity;
         ClearState();

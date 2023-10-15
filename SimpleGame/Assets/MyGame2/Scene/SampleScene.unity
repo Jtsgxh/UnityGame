@@ -3674,7 +3674,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 5b6f14e534e72ae4582a601e1babcf8e, type: 2}
+  - {fileID: 2100000, guid: d7b2369cb0f22094f9ab18405277220e, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -6693,6 +6693,10 @@ MonoBehaviour:
   climbMask:
     serializedVersion: 2
     m_Bits: 4294967295
+  maxClimbAcceleration: 0
+  maxClimbSpeed: 0
+  desiresClimbing: 0
+  lastClimbNormal: {x: 0, y: 0, z: 0}
   connectedBody: {fileID: 0}
   previousConnectedBody: {fileID: 0}
   connectionWorldPosition: {x: 0, y: 0, z: 0}

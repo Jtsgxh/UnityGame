@@ -10,14 +10,14 @@ public class MovementData : MonoBehaviour
     public float maxAirAcceleration = 1f;
     public Vector3 desiredVelocity;
     public float maxGroundAngel = 25f;
-    float minGroundDotProduct;
+    public float minGroundDotProduct;
     public Vector3 contactNormal;
     public int groundContactCount;
     public int stepsSinceLastGrounded;
     public float maxSnapSpeed = 100f;
     public float probeDistance = 1f;
     public bool OnGround => groundContactCount > 0;
-    [SerializeField] private LayerMask probeMask = -1;
+    [SerializeField] public  LayerMask probeMask = -1;
 
     public float jumpHeight;
     public int maxAirJumps = 0;
@@ -27,16 +27,16 @@ public class MovementData : MonoBehaviour
     #region StairsPart
 
     public float maxStairsAngle = 50f;
-    private float minStartStairsAngle;
-    [SerializeField] LayerMask stairsMask = -1;
+    public  float minStartStairsAngle;
+    [SerializeField] public LayerMask stairsMask = -1;
 
     #endregion
 
     #region SteepPart
 
-    private Vector3 steepNormal;
-    private int steepContactCount;
-    bool OnSteep => steepContactCount > 0;
+    public  Vector3 steepNormal;
+    public int steepContactCount;
+    public bool OnSteep => steepContactCount > 0;
 
     #endregion
 
@@ -44,7 +44,7 @@ public class MovementData : MonoBehaviour
 
     public float maxClimbAngel = 140f;
     public float minClimtDotProduct;
-    private Vector3 climbNormal;
+    public  Vector3 climbNormal;
     public int climbContactCount;
     public bool Climbing => climbContactCount > 0 && stepsSinceLastJump > 2;
     public LayerMask climbMask = -1;
@@ -59,7 +59,7 @@ public class MovementData : MonoBehaviour
 
     public Rigidbody connectedBody, previousConnectedBody;
     public Vector3 connectionWorldPosition;
-    private Vector3 connectionVelocity, connectionLocalPosition;
+    public  Vector3 connectionVelocity, connectionLocalPosition;
 
     #endregion
 
@@ -92,4 +92,54 @@ public class MovementData : MonoBehaviour
     {
         Init();
     }
+    
+    private void OnCollisionStay(Collision other)
+    {
+        EvaluateCollision(other);
+    }
+
+    private void OnCollisionEnter(Collision other)
+    {
+        EvaluateCollision(other);
+    }
+    
+    float GetMinDot(int layer)
+    {
+        return (stairsMask & (1 << layer)) == 0 ? minGroundDotProduct : minStartStairsAngle;
+    }
+    
+    void EvaluateCollision (Collision collision)
+    {
+        int layer = collision.gameObject.layer;
+        float minDot = GetMinDot(layer);
+        for (int i = 0; i < collision.contactCount; i++) {
+            Vector3 normal = collision.GetContact(i).normal;
+            float upDot = Vector3.Dot(upAxis, normal);
+            if (upDot >= minDot) {
+                groundContactCount += 1;
+                contactNormal += normal;
+                connectedBody = collision.rigidbody;
+            }else 
+            {
+                if (upDot > -0.01f)
+                {
+                    steepContactCount += 1;
+                    steepNormal += normal;
+                    if (groundContactCount == 0)
+                    {
+                        connectedBody = collision.rigidbody;
+                    }
+                }
+
+                if (desiresClimbing &&upDot >= minClimtDotProduct&&
+                    (climbMask & (1 << layer)) != 0)
+                {
+                    climbContactCount += 1;
+                    climbNormal += normal;
+                    connectedBody = collision.rigidbody;
+                }
+            }
+        }
+    }
+
 }

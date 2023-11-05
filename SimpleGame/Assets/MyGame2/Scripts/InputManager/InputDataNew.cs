@@ -8,7 +8,7 @@ public class InputDataNew:MonoBehaviour
     public float MoveAxisForward;
     public float MoveAxisRight;
     public Quaternion CameraRotation;
-    public bool JumpDown;
+    public bool desiredJump;
     public bool CrouchDown;
     public bool CrouchUp;
     public bool rush;
@@ -17,6 +17,22 @@ public class InputDataNew:MonoBehaviour
     public bool reload;
     public float rotatex;
     public float rotatey;
+
+    public void Clear()
+    {
+        MoveAxisForward = 0;
+        MoveAxisRight = 0;
+        desiredJump = false;
+        CrouchDown = false;
+        CrouchUp = false;
+        rush = false;
+        weapon = 0;
+        shoot = false;
+        reload = false;
+        rotatex = 0;
+        rotatey = 0;
+        CameraRotation = Quaternion.identity;
+    }
 }
 
 public  class Button
@@ -24,6 +40,11 @@ public  class Button
     //刚刚按下
     
     private bool isLastFramePressed;
+
+    public void Update()
+    {
+        listenInput?.Invoke();
+    }
 
     public void Press(bool isPressed)
     {
@@ -62,6 +83,13 @@ public  class Button
     public Action onReleased;
     
     public Action onHeld;
+
+    public Action listenInput;
+    
+    public void RegisterListenInput(Action action)
+    {
+        listenInput += action;
+    }
     
     public void RegisterOnPressed(Action action)
     {

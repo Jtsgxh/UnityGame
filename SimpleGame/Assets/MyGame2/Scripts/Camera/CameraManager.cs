@@ -6,7 +6,7 @@ public class CameraManager:MonoBehaviour
     public Transform focus;
     public float distance;
     public Vector3 focusPoint;
-    public PlayerData playerData;
+    public InputDataNew playerData;
     [SerializeField, Min(0f)]
     float focusRadius = 1f;
     [SerializeField, Range(0f, 1f)]
@@ -43,7 +43,7 @@ public class CameraManager:MonoBehaviour
     }
 
     private void LateUpdate()
-    {   orbitAngles = new Vector2(playerData.inputData.rotatey, playerData.inputData.rotatex);
+    {   orbitAngles = new Vector2(playerData.rotatey, playerData.rotatex);
         orbitRotation=Quaternion.Euler(orbitAngles);
         Quaternion lookRotation = gravityAlignment * orbitRotation;
         gravityAlignment =

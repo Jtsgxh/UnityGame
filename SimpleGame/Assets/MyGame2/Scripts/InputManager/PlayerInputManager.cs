@@ -20,7 +20,7 @@ public class PlayerInputManager:MonoBehaviour,IPlayerInputManager
     public Button buttonD;
     public Button buttonW;
     public Button space;
-    
+    public Button Mouse0;
 
     private void Awake()
     {
@@ -30,6 +30,7 @@ public class PlayerInputManager:MonoBehaviour,IPlayerInputManager
         buttonD = new Button();
         buttonW = new Button();
         space = new Button();
+        Mouse0 = new Button();
         space.RegisterOnPressed(delegate { InputDataNew.desiredJump = true; });
         space.RegisterListenInput(delegate {
             if (Input.GetKey(KeyCode.Space))
@@ -39,6 +40,18 @@ public class PlayerInputManager:MonoBehaviour,IPlayerInputManager
             else
             {
                 space.Press(false);
+            }
+        });
+        Mouse0.RegisterOnPressed(delegate { InputDataNew.shoot = true; });
+        Mouse0.RegisterListenInput(delegate
+        {
+            if (Input.GetKey(KeyCode.Mouse0))
+            {
+                Mouse0.Press(true);
+            }
+            else
+            {
+                Mouse0.Press(false);
             }
         });
         buttonA.RegisterOnHeld(delegate { InputDataNew.MoveAxisRight = -1; });
@@ -108,6 +121,7 @@ public class PlayerInputManager:MonoBehaviour,IPlayerInputManager
         buttonD.Update();
         buttonW.Update();
         space.Update();
+        Mouse0.Update();
         HandleCameraInput(InputDataNew);
     }
     

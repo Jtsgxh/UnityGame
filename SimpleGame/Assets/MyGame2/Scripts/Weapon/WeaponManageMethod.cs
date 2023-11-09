@@ -1,8 +1,9 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
 public abstract class WeaponManageMethod
 {
     public WeaponManager weaponBagManager;
-    
+    public Action OnChangeWeaponAction;
     public WeaponManageMethod(WeaponManager mgr)
     {
         this.weaponBagManager = mgr;
@@ -22,7 +23,7 @@ public abstract class WeaponManageMethod
 
     public virtual void OnChangeWeapon()
     {
-        
+        OnChangeWeaponAction?.Invoke();
     }
 
     public virtual void ChangeWeapon(int index)
@@ -38,7 +39,7 @@ public abstract class WeaponManageMethod
 
     public virtual WeaponInfo BuildWeapon(GunData data)
     {
-        return new WeaponInfo();
+        return new WeaponInfo(data,weaponBagManager);
     }
     
 }

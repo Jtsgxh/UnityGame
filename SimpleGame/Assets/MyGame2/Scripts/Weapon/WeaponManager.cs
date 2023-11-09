@@ -18,10 +18,15 @@ public class WeaponManager : MonoBehaviour
         weaponManageMethod = new WeaponManageMethod01(this);
         InputDataNew = gameObject.GetComponent<InputDataNew>();
         mainCamera = Camera.main.transform;
+    
+    }
+
+    private void Start()
+    {
         var weaponInfo = weaponManageMethod.BuildWeapon(GunData);
         InitWeapon(weaponInfo);
     }
-    
+
 
     private void Update()
     {

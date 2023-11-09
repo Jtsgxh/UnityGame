@@ -8,5 +8,9 @@ public class WeaponBagData : MonoBehaviour
     public List<WeaponInfo> weaponInfos;
     public int nowWeaponIndex=0;
 
+    public void Awake()
+    {
+        weaponInfos = new List<WeaponInfo>();
+    }
     
 }

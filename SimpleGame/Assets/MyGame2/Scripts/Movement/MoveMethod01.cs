@@ -132,7 +132,7 @@ public class MoveMethod01:ICharacterMove<IPlayerInputManager>
         data.stepsSinceLastGrounded += 1;
         data.stepsSinceLastJump += 1;
         data.velocity = data.body.velocity;
-        Debug.Log(data.velocity);
+        //Debug.Log(data.velocity);
         if (data.connectedBody)
         {
             if (data.connectedBody.isKinematic ||data. connectedBody.mass >= data.body.mass)
@@ -189,7 +189,7 @@ public class MoveMethod01:ICharacterMove<IPlayerInputManager>
          
        
         data.velocity += xAxis * (newX - currentX) + zAxis * (newZ - currentZ);
-         Debug.Log("data velocity is"+data.velocity);
+     //    Debug.Log("data velocity is"+data.velocity);
     }
     
     void ClearState (MovementData data) {

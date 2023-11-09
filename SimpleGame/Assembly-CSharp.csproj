@@ -87,13 +87,13 @@
      <Compile Include="Assets\MyGame2\Scripts\StateMachine\MoveStateBase.cs" />
      <Compile Include="Assets\MyGame2\Scripts\NewArtitecture\WeaponNew.cs" />
      <Compile Include="Assets\MyGame2\Scripts\Weapon\WeaponManageMethod.cs" />
+     <Compile Include="Assets\MyGame2\Scripts\Weapon\GunInfo01.cs" />
      <Compile Include="Assets\MyGame2\Scripts\ManagerList.cs" />
      <Compile Include="Assets\MyGame2\Scripts\AnimatorController.cs" />
      <Compile Include="Assets\MyGame2\Scripts\DataManager\DataManager.cs" />
      <Compile Include="Assets\MyGame2\Scripts\NewArtitecture\WaterGun.cs" />
      <Compile Include="Assets\MyGame2\Scripts\Rifle.cs" />
      <Compile Include="Assets\MyGame2\Scripts\NewArtitecture\MyCharacterController.cs" />
-     <Compile Include="Assets\MyGame2\Scripts\Weapon\GunInfo01.cs" />
      <Folder Include="Assets" />
      <Folder Include="Assets\MyGame2\Material\PaintAble" />
      <Folder Include="Assets\MyGame2\Material" />

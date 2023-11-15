@@ -37,9 +37,17 @@ public abstract class WeaponManageMethod
         weaponBagManager.BagData.weaponInfos.Add(weaponInfo);
     }
 
-    public virtual WeaponInfo BuildWeapon(GunData data)
+    public virtual WeaponInfo LoadWeapon(string weaponName)
+    {
+       GameObject gameObject= (GameObject)Resources.Load("WeaponPrefab/"+weaponName);
+       var temp = GameObject.Instantiate(gameObject);
+       temp.GetComponent<WeaponInfo>().BagData = weaponBagManager;
+       return temp.GetComponent<WeaponInfo>();
+    }
+
+    /*public virtual WeaponInfo BuildWeapon(GunData data)
     {
         return new WeaponInfo(data,weaponBagManager);
-    }
+    }*/
     
 }

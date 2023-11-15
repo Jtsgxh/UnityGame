@@ -23,7 +23,9 @@ public class WeaponManager : MonoBehaviour
 
     private void Start()
     {
-        var weaponInfo = weaponManageMethod.BuildWeapon(GunData);
+        /*var weaponInfo = weaponManageMethod.BuildWeapon(GunData);
+        InitWeapon(weaponInfo);*/
+        var weaponInfo = weaponManageMethod.LoadWeapon("WaterGun");
         InitWeapon(weaponInfo);
     }
 
@@ -47,7 +49,35 @@ public class WeaponManager : MonoBehaviour
     public void InitWeapon(WeaponInfo info)
     {
         weaponManageMethod.AddWeapon(info);
+        Vector3 pos = info.transform.position;
+        info.transform.SetParent(FindRecursively(this.transform,info.gunData.hangPointName));
+        info.transform.localPosition = pos;
+        // info.transform.SetParent(this.gameObject.transform.Find(info.gunData.hangPointName));
     }
     
+    Transform FindRecursively(Transform parent, string name)
+    {
+        // 如果父物体的名字和要查找的名字相同，就返回父物体
+        if (parent.name == name)
+        {
+            return parent;
+        }
+        // 否则，遍历父物体的所有子物体
+        for (int i = 0; i < parent.childCount; i++)
+        {
+            // 获取当前子物体
+            Transform child = parent.GetChild(i);
+            // 递归调用自己，传入当前子物体和要查找的名字
+            Transform result = FindRecursively(child, name);
+            // 如果找到了结果，就返回结果
+            if (result != null)
+            {
+                return result;
+            }
+        }
+        // 如果遍历完所有子物体都没有找到结果，就返回空
+        return null;
+    }
+
    
 }

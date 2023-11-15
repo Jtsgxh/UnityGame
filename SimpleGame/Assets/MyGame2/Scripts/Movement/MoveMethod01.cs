@@ -18,15 +18,41 @@ public class MoveMethod01:ICharacterMove<IPlayerInputManager>
     {
         throw new System.NotImplementedException();
     }
+    
+    public void UpdateRotation( float deltaTime,MovementData data)
+    {
+        Quaternion currentRotation = data.transform.rotation;
+        var inputData = mgr.InputManager.GetInputData();
+        Vector3 cameraPlanarDirection = Vector3.ProjectOnPlane(inputData.inputTransform.rotation * Vector3.forward, data.transform.up).normalized;
+        if (cameraPlanarDirection.sqrMagnitude == 0f)
+        {
+            cameraPlanarDirection = Vector3.ProjectOnPlane(inputData.inputTransform.rotation * Vector3.up, data.transform.up).normalized;
+        }
+        var _lookInputVector = cameraPlanarDirection;
+        if (_lookInputVector != Vector3.zero && data.OrientationSharpness > 0f)
+        {
+            // Smoothly interpolate from current to target look direction
+            Vector3 smoothedLookInputDirection = Vector3.Slerp(data.transform.forward, _lookInputVector, 1 - Mathf.Exp(-data.OrientationSharpness * deltaTime)).normalized;
+
+            // Set the current rotation (which will be used by the KinematicCharacterMotor)
+            currentRotation = Quaternion.LookRotation(smoothedLookInputDirection, data.transform.up);
+        }
+        data.transform.rotation = currentRotation;
+        // if (OrientTowardsGravity)
+        // {
+        //     // Rotate from current up to invert gravity
+        //     currentRotation = Quaternion.FromToRotation((currentRotation * Vector3.up), -Gravity) * currentRotation;
+        // }
+    }
     public void LogicUpdate(MovementData data)
     {
         var inputData = mgr.InputManager.GetInputData();
         Physics.gravity = data.gravityDir;
         Vector2 playerInput;
-        data.transform.up= CustomGravity.GetGravity(data.transform.position).normalized;;
+        //data.transform.up= -CustomGravity.GetGravity(data.transform.position).normalized;;
         playerInput.x = inputData.MoveAxisRight;
         playerInput.y = inputData.MoveAxisForward;
-       // UpdateRotation(transform.rotation,Time.deltaTime);
+        UpdateRotation(Time.deltaTime,data);
         playerInput=Vector2.ClampMagnitude(playerInput,1f);
         if (inputData.inputTransform)
         {

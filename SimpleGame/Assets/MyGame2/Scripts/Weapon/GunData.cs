@@ -12,4 +12,5 @@ public class GunData : ScriptableObject
     public float reloadTime;
     public string weaponPrefabName;
     public string bulletPrefabName;
+    public string hangPointName;
 }

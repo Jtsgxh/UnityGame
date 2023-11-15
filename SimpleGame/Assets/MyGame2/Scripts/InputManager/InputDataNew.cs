@@ -31,7 +31,6 @@ public class InputDataNew:MonoBehaviour
         reload = false;
         rotatex = 0;
         rotatey = 0;
-        CameraRotation = Quaternion.identity;
     }
 }
 

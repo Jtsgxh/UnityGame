@@ -19,3 +19,5 @@ MonoBehaviour:
   maxAmmo: 100
   reloadTime: 0.5
   weaponPrefabName: 
+  bulletPrefabName: 
+  hangPointName: GunHangPoint

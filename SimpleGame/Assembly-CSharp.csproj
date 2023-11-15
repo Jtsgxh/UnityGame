@@ -104,6 +104,7 @@
      <Folder Include="Assets\MyGame2\Scene" />
      <Folder Include="Assets\Sprites" />
      <Folder Include="Assets\MyGame2\Scripts" />
+     <Folder Include="Assets\Resources\WeaponPrefab" />
      <Folder Include="Assets\MyGame2\Material\Land" />
      <Folder Include="Assets\MyGame2\Scripts\DataManager" />
      <Folder Include="Assets\MyGame2\Scripts\StateMachine" />
@@ -111,6 +112,7 @@
      <Folder Include="Assets\MyGame2\Scripts\NewArtitecture" />
      <Folder Include="Assets\MyGame2\Scripts\Character" />
      <None Include="Assets\MyGame2\Material\PaintAble\TexturePainter.shader" />
+     <Folder Include="Assets\Resources" />
      <Folder Include="Assets\MyGame2\Scripts\Movement" />
      <None Include="Assets\MyGame2\Scripts\NewArtitecture\NewUnlitShader.shader" />
      <Folder Include="Assets\MyGame2\Scripts\Weapon" />

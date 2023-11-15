@@ -64,12 +64,16 @@ public class MovementData : MonoBehaviour
     #endregion
 
     #region gravity
-
     public  Vector3 upAxis, rightAxis, forwardAxis;
     public Vector3 gravityDir = new Vector3(0, -9.8f, 0);
-
     #endregion
 
+    #region rotation
+
+    public float OrientationSharpness= 10f;
+    public Vector3 lookInputVector;
+    #endregion
+  
 
     public void Init()
     {

@@ -1,2 +1,6 @@
 *.meta
-SimpleGame/Temp/
+SimpleGame/Temp/*
+SimpleGame/Library/*
+SimpleGame/Builds
+SimpleGame/obj
+SimpleGame/Logs

@@ -6,9 +6,9 @@ using UnityEngine.Serialization;
 public class MovementManager:MonoBehaviour
 {
     public MovementData MoveData;
-    public ICharacterMove<IPlayerInputManager> moveMethod;
+    public ICharacterMove  moveMethod;
     public IPlayerInputManager InputManager;
-    public Dictionary<string, ICharacterMove<IPlayerInputManager>> moveMethodMap;
+    public Dictionary<string, ICharacterMove> moveMethodMap;
     private void Awake()
     {
         this.MoveData = GetComponent<MovementData>();
@@ -27,7 +27,7 @@ public class MovementManager:MonoBehaviour
         moveMethod.PhysicsUpdate(MoveData);
     }
     
-    public bool SwitchMoveMethod(ICharacterMove<IPlayerInputManager> moveMethod)
+    public bool SwitchMoveMethod(ICharacterMove moveMethod)
     {
         if (moveMethod == null)
         {

@@ -1,7 +1,7 @@
 ﻿using Unity.VisualScripting;
 using UnityEngine;
 
-public class MoveMethod01:ICharacterMove<IPlayerInputManager>
+public class MoveMethod01:ICharacterMove
 {
     public MovementManager mgr;
 
@@ -12,11 +12,6 @@ public class MoveMethod01:ICharacterMove<IPlayerInputManager>
     public MoveMethod01(MovementManager mrg)
     {
         this.mgr = mrg;
-    }
-    
-    public void Init(IPlayerInputManager t)
-    {
-        throw new System.NotImplementedException();
     }
     
     public void UpdateRotation( float deltaTime,MovementData data)
@@ -44,7 +39,7 @@ public class MoveMethod01:ICharacterMove<IPlayerInputManager>
         //     currentRotation = Quaternion.FromToRotation((currentRotation * Vector3.up), -Gravity) * currentRotation;
         // }
     }
-    public void LogicUpdate(MovementData data)
+    public virtual void LogicUpdate(MovementData data)
     {
         var inputData = mgr.InputManager.GetInputData();
         Physics.gravity = data.gravityDir;
@@ -257,7 +252,7 @@ public class MoveMethod01:ICharacterMove<IPlayerInputManager>
         //}
     }
 
-    public void PhysicsUpdate(MovementData data)
+    public virtual void PhysicsUpdate(MovementData data)
     {
         var inputData = mgr.InputManager.GetInputData();
         Vector3 gravity = CustomGravity.GetGravity(data.body.position, out data.upAxis);

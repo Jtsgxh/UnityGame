@@ -36,4 +36,9 @@ public class MovementManager:MonoBehaviour
         this.moveMethod = moveMethod;
         return true;
     }
+    
+    public Vector3 GetMoveVelocity()
+    {
+        return MoveData.velocity;
+    }
 }

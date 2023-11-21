@@ -71,9 +71,12 @@ public class MovementData : MonoBehaviour
     #region rotation
 
     public float OrientationSharpness= 10f;
-    public Vector3 lookInputVector;
     #endregion
   
+    #region AnimationPart
+
+    public int AnimationState;
+    #endregion
 
     public void Init()
     {

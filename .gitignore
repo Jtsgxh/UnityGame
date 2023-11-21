@@ -1,6 +1,6 @@
 *.meta
 SimpleGame/Temp/*
-SimpleGame/Library/*
+SimpleGame/Library
 SimpleGame/Builds
 SimpleGame/obj
 SimpleGame/Logs

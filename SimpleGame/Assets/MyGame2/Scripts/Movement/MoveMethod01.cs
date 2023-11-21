@@ -61,8 +61,8 @@ public class MoveMethod01:ICharacterMove
             Vector3 right = playerInputSpace.right;
             right.y = 0f;
             right.Normalize();*/
-            data.desiredVelocity.x= playerInput.x*data.maxSpeed;
-            data.desiredVelocity.z= playerInput.y*data.maxSpeed;
+            data.desiredVelocity.x= playerInput.x;
+            data.desiredVelocity.z= playerInput.y;
         }
         else
         {
@@ -173,7 +173,7 @@ public class MoveMethod01:ICharacterMove
         }
         else
         {
-            data. contactNormal = data.upAxis;
+            data.contactNormal = data.upAxis;
         }
     }
 
@@ -288,5 +288,10 @@ public class MoveMethod01:ICharacterMove
     public Vector3 ProjectDirectionOnPlane(Vector3 vector,Vector3 contactNormal)
     {
         return (vector - contactNormal.normalized * Vector3.Dot(vector, contactNormal.normalized)).normalized;
+    }
+
+    public void UpdateAnimationState()
+    {
+        
     }
 }

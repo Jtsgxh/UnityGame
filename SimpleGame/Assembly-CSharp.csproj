@@ -239,6 +239,7 @@
      <Folder Include="Assets\RPGTinyHeroWavePBR\Material" />
      <Folder Include="Assets\MyGame2\Scripts\Rotation" />
      <Folder Include="Assets\RPGTinyHeroWavePBR\Animation" />
+     <None Include="Assets\MyGame2\思路.txt" />
      <Folder Include="Assets\PlaystarkNatureStylizedPack\PlaystarkVegetationStylized\Vegetation\Foliage" />
      <Folder Include="Assets\PlaystarkNatureStylizedPack\PlaystarkVegetationStylized\Dirt" />
      <Folder Include="Assets\MyGame2\Scripts\Camera" />
@@ -934,6 +935,18 @@
      </Reference>
      <Reference Include="Unity.VisualScripting.Core">
      <HintPath>D:\UnityProject\MySimpleGame\SimpleGame\Library\ScriptAssemblies\Unity.VisualScripting.Core.dll</HintPath>
+     </Reference>
+     <Reference Include="Unity.ProBuilder">
+     <HintPath>D:\UnityProject\MySimpleGame\SimpleGame\Library\ScriptAssemblies\Unity.ProBuilder.dll</HintPath>
+     </Reference>
+     <Reference Include="Unity.ProBuilder.AddOns.Editor">
+     <HintPath>D:\UnityProject\MySimpleGame\SimpleGame\Library\ScriptAssemblies\Unity.ProBuilder.AddOns.Editor.dll</HintPath>
+     </Reference>
+     <Reference Include="Unity.ProBuilder.Editor">
+     <HintPath>D:\UnityProject\MySimpleGame\SimpleGame\Library\ScriptAssemblies\Unity.ProBuilder.Editor.dll</HintPath>
+     </Reference>
+     <Reference Include="Unity.ProBuilder.AssetIdRemapUtility">
+     <HintPath>D:\UnityProject\MySimpleGame\SimpleGame\Library\ScriptAssemblies\Unity.ProBuilder.AssetIdRemapUtility.dll</HintPath>
      </Reference>
   </ItemGroup>
   <ItemGroup>

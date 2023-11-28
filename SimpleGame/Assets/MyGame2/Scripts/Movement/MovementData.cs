@@ -19,7 +19,7 @@ public class MovementData : MonoBehaviour
     public bool OnGround => groundContactCount > 0;
     [SerializeField] public  LayerMask probeMask = -1;
 
-    public float jumpHeight;
+    public float jumpHeight=2;
     public int maxAirJumps = 0;
     public int jumpPhase;
     public int stepsSinceLastJump;
@@ -46,7 +46,7 @@ public class MovementData : MonoBehaviour
     public float minClimtDotProduct;
     public  Vector3 climbNormal;
     public int climbContactCount;
-    public bool Climbing => climbContactCount > 0 && stepsSinceLastJump > 2;
+    public bool Climbing => climbContactCount > 0 && stepsSinceLastJump > 2&&desiresClimbing;
     public LayerMask climbMask = -1;
     public float maxClimbAcceleration;
     public float maxClimbSpeed;
@@ -138,7 +138,7 @@ public class MovementData : MonoBehaviour
                     }
                 }
 
-                if (desiresClimbing &&upDot >= minClimtDotProduct&&
+                if (upDot >= minClimtDotProduct&&
                     (climbMask & (1 << layer)) != 0)
                 {
                     climbContactCount += 1;

@@ -6,8 +6,9 @@ using UnityEngine;
 public class AnimatorData : MonoBehaviour
 {
     public Vector3 animatorSpeed;
-    private void OnAnimatorMove()
+    
+    /*private void OnAnimatorMove()
     {
         animatorSpeed = GetComponent<Animator>().velocity;
-    }
+    }*/
 }

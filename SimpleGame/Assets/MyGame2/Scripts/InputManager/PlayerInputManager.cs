@@ -32,6 +32,7 @@ public class PlayerInputManager:MonoBehaviour,IPlayerInputManager
         space = new Button();
         Mouse0 = new Button();
         space.RegisterOnPressed(delegate { InputDataNew.desiredJump = true; });
+        space.RegisterOnHeld(delegate { InputDataNew.desiredClimb = true; });
         space.RegisterListenInput(delegate {
             if (Input.GetKey(KeyCode.Space))
             {
@@ -115,6 +116,12 @@ public class PlayerInputManager:MonoBehaviour,IPlayerInputManager
 
     private void Update()
     {
+        
+        HandleCameraInput(InputDataNew);
+    }
+
+    private void FixedUpdate()
+    {
         InputDataNew.Clear();
         buttonA.Update();
         buttonS.Update(); 
@@ -122,11 +129,8 @@ public class PlayerInputManager:MonoBehaviour,IPlayerInputManager
         buttonW.Update();
         space.Update();
         Mouse0.Update();
-        HandleCameraInput(InputDataNew);
     }
-    
 
- 
 
     private void HandleCameraInput(InputDataNew characterInputs)
     {

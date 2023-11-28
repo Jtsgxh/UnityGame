@@ -45,6 +45,7 @@
      <Compile Include="Assets\MyGame2\Scripts\Singleton.cs" />
      <Compile Include="Assets\MyGame2\Scripts\Weapon\WeaponInfo.cs" />
      <Compile Include="Assets\MyGame2\Scripts\AudioManager.cs" />
+     <Compile Include="Assets\MyGame2\Scripts\Tool\ManagerInstance.cs" />
      <Compile Include="Assets\MyGame2\Scripts\Movement\MovementManager.cs" />
      <Compile Include="Assets\MyGame2\Scripts\Movement\ICharacterMove.cs" />
      <Compile Include="Assets\MyGame2\Scripts\InputManager\IInputManager.cs" />
@@ -53,10 +54,12 @@
      <Compile Include="Assets\MyGame2\Scripts\NewArtitecture\WeaponManagerNew.cs" />
      <Compile Include="Assets\MyGame2\Scripts\Weapon\WeaponManageMethod01.cs" />
      <Compile Include="Assets\MyGame2\Scripts\Weapon\GunData.cs" />
+     <Compile Include="Assets\MyGame2\Scripts\InputManager\CostomButton.cs" />
      <Compile Include="Assets\MyGame2\Scripts\StateMachine\StateBase.cs" />
      <Compile Include="Assets\MyGame2\Scripts\NewArtitecture\GameManager.cs" />
      <Compile Include="Assets\MyGame2\Scripts\NewArtitecture\NetworkService.cs" />
      <Compile Include="Assets\MyGame2\Scripts\Weapon.cs" />
+     <Compile Include="Assets\MyGame2\Scripts\Animation\AnimatorManager.cs" />
      <Compile Include="Assets\MyGame2\Scripts\NewArtitecture\BaseService.cs" />
      <Compile Include="Assets\MyGame2\Scripts\Weapon\WeaponManager.cs" />
      <Compile Include="Assets\MyGame2\Scripts\InputService.cs" />
@@ -66,6 +69,7 @@
      <Compile Include="Assets\MyGame2\Scripts\NewArtitecture\PhyCharactor.cs" />
      <Compile Include="Assets\MyGame2\Scripts\NetworkService.cs" />
      <Compile Include="Assets\MyGame2\Scripts\Camera\CameraManager.cs" />
+     <Compile Include="Assets\MyGame2\Scripts\Tool\GameTool.cs" />
      <Compile Include="Assets\MyGame2\Scripts\NewArtitecture\CustomGravity.cs" />
      <Compile Include="Assets\MyGame2\Scripts\Weapon\WeaponBagData.cs" />
      <Compile Include="Assets\MyGame2\Scripts\NewArtitecture\CCPhysics.cs" />
@@ -89,15 +93,13 @@
      <Compile Include="Assets\MyGame2\Scripts\Weapon\WeaponManageMethod.cs" />
      <Compile Include="Assets\MyGame2\Scripts\Weapon\GunInfo01.cs" />
      <Compile Include="Assets\MyGame2\Scripts\ManagerList.cs" />
+     <Compile Include="Assets\MyGame2\Scripts\Animation\AnimatorData.cs" />
      <Compile Include="Assets\MyGame2\Scripts\AnimatorController.cs" />
      <Compile Include="Assets\MyGame2\Scripts\DataManager\DataManager.cs" />
      <Compile Include="Assets\MyGame2\Scripts\NewArtitecture\WaterGun.cs" />
      <Compile Include="Assets\MyGame2\Scripts\Rifle.cs" />
-     <Compile Include="Assets\MyGame2\Scripts\NewArtitecture\MyCharacterController.cs" />
-     <Compile Include="Assets\MyGame2\Scripts\Animation\AnimatorData.cs" />
-     <Compile Include="Assets\MyGame2\Scripts\Animation\AnimatorManager.cs" />
-     <Compile Include="Assets\MyGame2\Scripts\Tool\GameTool.cs" />
      <Compile Include="Assets\MyGame2\Scripts\Movement\MoveMethodRootMotion.cs" />
+     <Compile Include="Assets\MyGame2\Scripts\NewArtitecture\MyCharacterController.cs" />
      <Folder Include="Assets" />
      <Folder Include="Assets\PlaystarkNatureStylizedPack\PlaystarkVegetationStylized\Jungle_logs\Prefabs" />
      <Folder Include="Assets\MyGame2\Material\PaintAble" />
@@ -164,6 +166,7 @@
      <Folder Include="Assets\PlaystarkNatureStylizedPack\PlaystarkRocks&amp;CliffsStylizedPack\Rocks\Materials" />
      <Folder Include="Assets\PlaystarkNatureStylizedPack\PlaystarkVegetationStylized\Vegetation\Foliage\Spore Foliage\prefabs" />
      <Folder Include="Assets\RPGTinyHeroWavePBR\Scene" />
+     <Folder Include="Assets\MyGame2\Scripts\RotationManager" />
      <Folder Include="Assets\MyGame2\Animations\Basic Motions\Materials" />
      <Folder Include="Assets\MyGame2\Animations\Basic Motions\AnimationControllers" />
      <Folder Include="Assets\MyGame2\Animations\Basic Motions\Animations\Social" />
@@ -212,6 +215,7 @@
      <Folder Include="Assets\RPGTinyHeroWavePBR\Prefab\Weapons" />
      <Folder Include="Assets\PlaystarkNatureStylizedPack\PlaystarkRocks&amp;CliffsStylizedPack\Rocks\Rocks\Prefabs" />
      <Folder Include="Assets\RPGTinyHeroWavePBR\Animation\SwordAndShield\RootMotion" />
+     <Folder Include="Assets\MyGame2\Animations\Climb" />
      <None Include="Assets\PlaystarkNatureStylizedPack\PlaystarkVegetationStylized\Shaders\SporeFoliage.shader" />
      <Folder Include="Assets\PlaystarkNatureStylizedPack\PlaystarkVegetationStylized\Vegetation\Foliage\Grass\Prefabs" />
      <Folder Include="Assets\RPGTinyHeroWavePBR\Mesh\Weapons\Projectile" />
@@ -867,14 +871,8 @@
      <Reference Include="Unity.VisualScripting.Flow.Editor">
      <HintPath>D:\UnityProject\MySimpleGame\SimpleGame\Library\ScriptAssemblies\Unity.VisualScripting.Flow.Editor.dll</HintPath>
      </Reference>
-     <Reference Include="Unity.ShaderGraph.Editor">
-     <HintPath>D:\UnityProject\MySimpleGame\SimpleGame\Library\ScriptAssemblies\Unity.ShaderGraph.Editor.dll</HintPath>
-     </Reference>
      <Reference Include="Unity.VSCode.Editor">
      <HintPath>D:\UnityProject\MySimpleGame\SimpleGame\Library\ScriptAssemblies\Unity.VSCode.Editor.dll</HintPath>
-     </Reference>
-     <Reference Include="Unity.VisualScripting.Shared.Editor">
-     <HintPath>D:\UnityProject\MySimpleGame\SimpleGame\Library\ScriptAssemblies\Unity.VisualScripting.Shared.Editor.dll</HintPath>
      </Reference>
      <Reference Include="Unity.TextMeshPro.Editor">
      <HintPath>D:\UnityProject\MySimpleGame\SimpleGame\Library\ScriptAssemblies\Unity.TextMeshPro.Editor.dll</HintPath>
@@ -882,11 +880,8 @@
      <Reference Include="Unity.VisualStudio.Editor">
      <HintPath>D:\UnityProject\MySimpleGame\SimpleGame\Library\ScriptAssemblies\Unity.VisualStudio.Editor.dll</HintPath>
      </Reference>
-     <Reference Include="Unity.RenderPipelines.ShaderGraph.ShaderGraphLibrary">
-     <HintPath>D:\UnityProject\MySimpleGame\SimpleGame\Library\ScriptAssemblies\Unity.RenderPipelines.ShaderGraph.ShaderGraphLibrary.dll</HintPath>
-     </Reference>
-     <Reference Include="Unity.Timeline.Editor">
-     <HintPath>D:\UnityProject\MySimpleGame\SimpleGame\Library\ScriptAssemblies\Unity.Timeline.Editor.dll</HintPath>
+     <Reference Include="Unity.ProBuilder.AddOns.Editor">
+     <HintPath>D:\UnityProject\MySimpleGame\SimpleGame\Library\ScriptAssemblies\Unity.ProBuilder.AddOns.Editor.dll</HintPath>
      </Reference>
      <Reference Include="Unity.Timeline">
      <HintPath>D:\UnityProject\MySimpleGame\SimpleGame\Library\ScriptAssemblies\Unity.Timeline.dll</HintPath>
@@ -909,8 +904,11 @@
      <Reference Include="Unity.RenderPipelines.Core.Runtime">
      <HintPath>D:\UnityProject\MySimpleGame\SimpleGame\Library\ScriptAssemblies\Unity.RenderPipelines.Core.Runtime.dll</HintPath>
      </Reference>
-     <Reference Include="Unity.VisualScripting.Flow">
-     <HintPath>D:\UnityProject\MySimpleGame\SimpleGame\Library\ScriptAssemblies\Unity.VisualScripting.Flow.dll</HintPath>
+     <Reference Include="Unity.ProBuilder">
+     <HintPath>D:\UnityProject\MySimpleGame\SimpleGame\Library\ScriptAssemblies\Unity.ProBuilder.dll</HintPath>
+     </Reference>
+     <Reference Include="Unity.ProBuilder.Editor">
+     <HintPath>D:\UnityProject\MySimpleGame\SimpleGame\Library\ScriptAssemblies\Unity.ProBuilder.Editor.dll</HintPath>
      </Reference>
      <Reference Include="UnityEditor.UI">
      <HintPath>D:\UnityProject\MySimpleGame\SimpleGame\Library\ScriptAssemblies\UnityEditor.UI.dll</HintPath>
@@ -924,8 +922,29 @@
      <Reference Include="Unity.RenderPipelines.Core.ShaderLibrary">
      <HintPath>D:\UnityProject\MySimpleGame\SimpleGame\Library\ScriptAssemblies\Unity.RenderPipelines.Core.ShaderLibrary.dll</HintPath>
      </Reference>
+     <Reference Include="Unity.VisualScripting.Flow">
+     <HintPath>D:\UnityProject\MySimpleGame\SimpleGame\Library\ScriptAssemblies\Unity.VisualScripting.Flow.dll</HintPath>
+     </Reference>
      <Reference Include="UnityEngine.UI">
      <HintPath>D:\UnityProject\MySimpleGame\SimpleGame\Library\ScriptAssemblies\UnityEngine.UI.dll</HintPath>
+     </Reference>
+     <Reference Include="Unity.VisualScripting.Core">
+     <HintPath>D:\UnityProject\MySimpleGame\SimpleGame\Library\ScriptAssemblies\Unity.VisualScripting.Core.dll</HintPath>
+     </Reference>
+     <Reference Include="Unity.ShaderGraph.Editor">
+     <HintPath>D:\UnityProject\MySimpleGame\SimpleGame\Library\ScriptAssemblies\Unity.ShaderGraph.Editor.dll</HintPath>
+     </Reference>
+     <Reference Include="Unity.ProBuilder.AssetIdRemapUtility">
+     <HintPath>D:\UnityProject\MySimpleGame\SimpleGame\Library\ScriptAssemblies\Unity.ProBuilder.AssetIdRemapUtility.dll</HintPath>
+     </Reference>
+     <Reference Include="Unity.VisualScripting.Shared.Editor">
+     <HintPath>D:\UnityProject\MySimpleGame\SimpleGame\Library\ScriptAssemblies\Unity.VisualScripting.Shared.Editor.dll</HintPath>
+     </Reference>
+     <Reference Include="Unity.RenderPipelines.ShaderGraph.ShaderGraphLibrary">
+     <HintPath>D:\UnityProject\MySimpleGame\SimpleGame\Library\ScriptAssemblies\Unity.RenderPipelines.ShaderGraph.ShaderGraphLibrary.dll</HintPath>
+     </Reference>
+     <Reference Include="Unity.Timeline.Editor">
+     <HintPath>D:\UnityProject\MySimpleGame\SimpleGame\Library\ScriptAssemblies\Unity.Timeline.Editor.dll</HintPath>
      </Reference>
      <Reference Include="Unity.RenderPipelines.Core.Editor">
      <HintPath>D:\UnityProject\MySimpleGame\SimpleGame\Library\ScriptAssemblies\Unity.RenderPipelines.Core.Editor.dll</HintPath>
@@ -933,23 +952,12 @@
      <Reference Include="Unity.VisualScripting.State">
      <HintPath>D:\UnityProject\MySimpleGame\SimpleGame\Library\ScriptAssemblies\Unity.VisualScripting.State.dll</HintPath>
      </Reference>
-     <Reference Include="Unity.VisualScripting.Core">
-     <HintPath>D:\UnityProject\MySimpleGame\SimpleGame\Library\ScriptAssemblies\Unity.VisualScripting.Core.dll</HintPath>
-     </Reference>
-     <Reference Include="Unity.ProBuilder">
-     <HintPath>D:\UnityProject\MySimpleGame\SimpleGame\Library\ScriptAssemblies\Unity.ProBuilder.dll</HintPath>
-     </Reference>
-     <Reference Include="Unity.ProBuilder.AddOns.Editor">
-     <HintPath>D:\UnityProject\MySimpleGame\SimpleGame\Library\ScriptAssemblies\Unity.ProBuilder.AddOns.Editor.dll</HintPath>
-     </Reference>
-     <Reference Include="Unity.ProBuilder.Editor">
-     <HintPath>D:\UnityProject\MySimpleGame\SimpleGame\Library\ScriptAssemblies\Unity.ProBuilder.Editor.dll</HintPath>
-     </Reference>
-     <Reference Include="Unity.ProBuilder.AssetIdRemapUtility">
-     <HintPath>D:\UnityProject\MySimpleGame\SimpleGame\Library\ScriptAssemblies\Unity.ProBuilder.AssetIdRemapUtility.dll</HintPath>
-     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="Assembly-CSharp-firstpass.csproj">
+      <Project>{ba915e0f-0ee0-b875-5083-476b9ea36906}</Project>
+      <Name>Assembly-CSharp-firstpass</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it.

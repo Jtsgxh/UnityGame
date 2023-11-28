@@ -14,6 +14,10 @@ public class CameraManager:MonoBehaviour
     Vector2 orbitAngles = new Vector2(45f, 0f);
     Quaternion gravityAlignment = Quaternion.identity;
     Quaternion orbitRotation;
+    [SerializeField,Range(-90,0)]
+    private float minAngle = -90;
+    [SerializeField,Range(0,150)]
+    private float maxAngle = 90;
     private void Awake()
     {
         focusPoint = focus.position;
@@ -44,6 +48,7 @@ public class CameraManager:MonoBehaviour
 
     private void LateUpdate()
     {   orbitAngles = new Vector2(playerData.rotatey, playerData.rotatex);
+        orbitAngles.x = Mathf.Clamp(orbitAngles.x, minAngle, maxAngle);
         orbitRotation=Quaternion.Euler(orbitAngles);
         Quaternion lookRotation = gravityAlignment * orbitRotation;
         gravityAlignment =

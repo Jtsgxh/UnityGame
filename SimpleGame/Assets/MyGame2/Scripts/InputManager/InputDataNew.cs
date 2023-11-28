@@ -9,6 +9,7 @@ public class InputDataNew:MonoBehaviour
     public float MoveAxisRight;
     public Quaternion CameraRotation;
     public bool desiredJump;
+    public bool desiredClimb;
     public bool CrouchDown;
     public bool CrouchUp;
     public bool rush;
@@ -23,6 +24,7 @@ public class InputDataNew:MonoBehaviour
         MoveAxisForward = 0;
         MoveAxisRight = 0;
         desiredJump = false;
+        desiredClimb = false;
         CrouchDown = false;
         CrouchUp = false;
         rush = false;

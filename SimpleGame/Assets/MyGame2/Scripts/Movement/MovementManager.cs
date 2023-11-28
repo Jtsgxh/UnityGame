@@ -14,7 +14,8 @@ public class MovementManager:MonoBehaviour
         this.MoveData = GetComponent<MovementData>();
         this.InputManager = GetComponent<PlayerInputManager>();
         this.moveMethod = new MoveMethod01(this);
-        
+        //设置目标帧率
+        Application.targetFrameRate = 60;  
     }
 
     private void Update()

@@ -22,6 +22,9 @@ public class AnimatorManager : MonoBehaviour
 
     private void Update()
     {
+        
         AnimationMethod.UpdateAnimator();
     }
+    
+    //应该有一个动态切换animator的方法并且更改相应的动画控制方法
 }

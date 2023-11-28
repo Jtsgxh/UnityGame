@@ -1,4 +1,5 @@
-﻿using Unity.VisualScripting;
+﻿using System;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class MoveMethod01:ICharacterMove
@@ -16,6 +17,13 @@ public class MoveMethod01:ICharacterMove
     
     public void UpdateRotation( float deltaTime,MovementData data)
     {
+        if (data.Climbing)
+        {
+            mgr.transform.forward = -data.climbNormal.normalized;
+            Debug.DrawRay(mgr.transform.position,data.climbNormal.normalized*10,Color.magenta);
+           // mgr.transform.up = data.upAxis;
+            return;
+        }
         Quaternion currentRotation = data.transform.rotation;
         var inputData = mgr.InputManager.GetInputData();
         Vector3 cameraPlanarDirection = Vector3.ProjectOnPlane(inputData.inputTransform.rotation * Vector3.forward, data.transform.up).normalized;
@@ -179,12 +187,22 @@ public class MoveMethod01:ICharacterMove
 
     void AdjustVelocity (MovementData data) {
         float acceleration, speed;
+        if (InputData.desiredClimb)
+        {
+            data.desiresClimbing = true;
+        }
+        else
+        {
+            data.desiresClimbing = false;
+        }
         Vector3 xAxis, zAxis;
         if (data.Climbing) {
             acceleration = data.maxClimbAcceleration;
             speed = data.maxClimbSpeed;
             xAxis = Vector3.Cross(data.contactNormal, data.upAxis);
+            Debug.DrawRay(mgr.transform.position,xAxis,Color.yellow);
             zAxis = data.upAxis;
+            Debug.DrawRay(mgr.transform.position,zAxis,Color.green);
         }
         else {
             acceleration =data. OnGround ? data.maxAcceleration : data.maxAirAcceleration;
@@ -194,9 +212,9 @@ public class MoveMethod01:ICharacterMove
         }
         // Debug.DrawRay(transform.position,forwardAxis*5,Color.magenta);
         xAxis = ProjectDirectionOnPlane(xAxis,data. contactNormal);
-        //  Debug.DrawRay(transform.position,xAxis*5,Color.red);
+          Debug.DrawRay(mgr.transform.position,xAxis,Color.red);
         zAxis = ProjectDirectionOnPlane(zAxis, data.contactNormal);
-        // Debug.DrawRay(transform.position,zAxis*5,Color.blue);
+         Debug.DrawRay(mgr.transform.position,zAxis,Color.blue);
         Vector3 relativeVelocity = data.velocity -data. connectionVelocity;
         float currentX = Vector3.Dot(relativeVelocity, xAxis);
         float currentZ = Vector3.Dot(relativeVelocity, zAxis);
@@ -238,7 +256,7 @@ public class MoveMethod01:ICharacterMove
             }
             jumpDirection = data.contactNormal;
         }else {
-            return;
+             return;
         }
         data.stepsSinceLastJump = 0;
         data.jumpPhase += 1;
@@ -256,6 +274,7 @@ public class MoveMethod01:ICharacterMove
     {
         var inputData = mgr.InputManager.GetInputData();
         Vector3 gravity = CustomGravity.GetGravity(data.body.position, out data.upAxis);
+        data.upAxis=data.upAxis.normalized;
         UpdateState(data);
         AdjustVelocity(data);
         if (inputData.desiredJump)
@@ -285,6 +304,7 @@ public class MoveMethod01:ICharacterMove
         ClearState(data);
     }
     
+
     public Vector3 ProjectDirectionOnPlane(Vector3 vector,Vector3 contactNormal)
     {
         return (vector - contactNormal.normalized * Vector3.Dot(vector, contactNormal.normalized)).normalized;
